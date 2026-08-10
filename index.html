@@ -805,40 +805,38 @@ tsParticles.load("tsparticles",{
   background:{color:{value:"transparent"}},
   fpsLimit:60,
   particles:{
-    number:{value:120,density:{enable:true,area:800}},
+    number:{value:70,density:{enable:true,area:900}},
     color:{value:["#f2ede8","#e8a33d","#4fd1c5"]},
     opacity:{
-      value:0.35,
+      value:0.22,
       random:true,
-      animation:{enable:true,speed:0.8,minimumValue:0.1,sync:false}
+      animation:{enable:true,speed:0.5,minimumValue:0.05,sync:false}
     },
     size:{
-      value:2.5,
-      random:{enable:true,minimumValue:0.8},
-      animation:{enable:true,speed:1.5,minimumValue:0.5,sync:false}
+      value:1.8,
+      random:{enable:true,minimumValue:0.5},
+      animation:{enable:false}
     },
     move:{
-      enable:true,speed:0.9,direction:"none",
+      enable:true,speed:0.5,direction:"none",
       random:true,straight:false,outModes:"out",
-      attract:{enable:true,rotateX:600,rotateY:1200}
+      attract:{enable:false}
     },
     links:{
-      enable:true,distance:140,
-      color:"#f2ede8",opacity:0.1,width:1,
-      triangles:{enable:true,color:"#e8a33d",opacity:0.02}
+      enable:true,distance:130,
+      color:"#f2ede8",opacity:0.07,width:1,
+      triangles:{enable:false}
     }
   },
   interactivity:{
     detectsOn:"window",
     events:{
-      onHover:{enable:true,mode:["grab","bubble"]},
+      onHover:{enable:true,mode:"grab"},
       onClick:{enable:true,mode:"push"}
     },
     modes:{
-      grab:{distance:180,links:{opacity:0.35,color:"#e8a33d"}},
-      bubble:{distance:220,size:7,duration:0.4,opacity:0.35},
-      push:{quantity:4},
-      repulse:{distance:120,duration:0.5}
+      grab:{distance:160,links:{opacity:0.28,color:"#e8a33d"}},
+      push:{quantity:3}
     }
   },
   detectRetina:true
@@ -850,7 +848,7 @@ const ring = document.getElementById('cursor-ring');
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
 (function animRing(){
-  rx += (mx-rx)*.12; ry += (my-ry)*.12;
+  rx += (mx-rx)*.22; ry += (my-ry)*.22;
   ring.style.left=rx+'px'; ring.style.top=ry+'px';
   requestAnimationFrame(animRing);
 })();
