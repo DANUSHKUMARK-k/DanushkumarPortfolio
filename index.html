@@ -163,9 +163,15 @@ section{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction
 .hero-scroll-cue{display:flex;flex-direction:column;align-items:center;gap:.5rem;position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);opacity:.45;font-family:'Ubuntu Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;}
 .scroll-bar{width:1px;height:40px;background:linear-gradient(var(--fg),transparent);animation:scrollPulse 2s ease-in-out infinite;}
 @keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(1);}50%{opacity:1;transform:scaleY(1.25);}}
-.hero-right{flex:0 0 280px;display:flex;justify-content:center;}
+.hero-right{flex:0 0 320px;display:flex;justify-content:center;align-items:flex-end;}
 .astro-wrap{animation:float 5s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(-14px);}50%{transform:translateY(14px) translateX(8px);}}
+.hero-photo{
+  width:320px;
+  max-width:100%;
+  object-fit:contain;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.6));
+  display:block;
+}
 @media(max-width:860px){#hero{flex-direction:column-reverse;justify-content:center;padding-top:8rem;}.hero-right{flex:none;width:150px;}.hero-name{white-space:normal;}}
 </style>
 <style>
@@ -327,22 +333,8 @@ footer span{color:var(--accent);}
     </div>
   </div>
   <div class="hero-right reveal-right">
-    <div class="astro-wrap" aria-hidden="true">
-      <svg width="240" height="320" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" fill="none">
-        <ellipse cx="100" cy="80" rx="46" ry="52" fill="#ddd4ca" stroke="#f2ede8" stroke-width="1.5"/>
-        <ellipse cx="100" cy="80" rx="32" ry="37" fill="#1a2535" opacity=".95"/>
-        <ellipse cx="88" cy="68" rx="9" ry="5" fill="#fff" opacity=".1" transform="rotate(-22 88 68)"/>
-        <circle cx="112" cy="72" r="4" fill="#4fd1c5" opacity=".2"/>
-        <rect x="63" y="127" width="74" height="82" rx="20" fill="#ccc3b9" stroke="#f2ede8" stroke-width="1.2"/>
-        <rect x="25" y="133" width="42" height="20" rx="10" fill="#ccc3b9" stroke="#f2ede8" stroke-width="1.2"/>
-        <rect x="133" y="133" width="42" height="20" rx="10" fill="#ccc3b9" stroke="#f2ede8" stroke-width="1.2"/>
-        <rect x="69" y="204" width="25" height="48" rx="12" fill="#ccc3b9" stroke="#f2ede8" stroke-width="1.2"/>
-        <rect x="106" y="204" width="25" height="48" rx="12" fill="#ccc3b9" stroke="#f2ede8" stroke-width="1.2"/>
-        <rect x="78" y="147" width="44" height="25" rx="5" fill="#4fd1c5" opacity=".3"/>
-        <circle cx="88" cy="159" r="3.5" fill="#f2ede8" opacity=".4"/>
-        <circle cx="100" cy="159" r="3.5" fill="#e8a33d" opacity=".55"/>
-        <circle cx="112" cy="159" r="3.5" fill="#f2ede8" opacity=".4"/>
-      </svg>
+    <div class="astro-wrap" aria-hidden="false">
+      <img src="me.png" alt="Danushkumar K" class="hero-photo"/>
     </div>
   </div>
   <div class="hero-scroll-cue" aria-hidden="true">
