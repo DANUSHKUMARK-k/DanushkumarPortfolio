@@ -9,6 +9,99 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,700;1,800&family=Karla:wght@300;400;500;600;700&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <style>
+/* ══ INTRO SPLASH ══════════════════════════════════════════════ */
+#intro{
+  position:fixed;inset:0;z-index:9999;
+  background:#050505;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:2.5rem;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+#intro.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+
+.dkmr-row{display:flex;gap:.06em;line-height:1;}
+.dl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-style:italic;
+  font-size:clamp(5rem,20vw,14rem);
+  text-transform:uppercase;color:#fff;
+  display:inline-block;
+  opacity:0;transform:translateY(60px);
+  animation:dlIn .6s cubic-bezier(.16,1,.3,1) forwards;
+  will-change:transform,opacity;
+}
+#dl-d{animation-delay:.1s;}
+#dl-k{animation-delay:.2s;}
+#dl-m{animation-delay:.3s;}
+#dl-r{animation-delay:.4s;color:#e8a33d;}
+
+@keyframes dlIn{from{opacity:0;transform:translateY(60px);}to{opacity:1;transform:none;}}
+
+/* fly-out animations triggered by JS */
+#dl-d.fly{animation:flyD .6s cubic-bezier(.55,0,1,.45) forwards!important;}
+#dl-k.fly{animation:flyK .6s cubic-bezier(.55,0,1,.45) forwards!important;}
+#dl-m.fly{animation:flyM .6s cubic-bezier(.55,0,1,.45) forwards!important;}
+#dl-r.fly{animation:flyR .6s cubic-bezier(.55,0,1,.45) forwards!important;}
+@keyframes flyD{to{opacity:0;transform:translate(-200px,-280px) rotate(-22deg) scale(.2);}}
+@keyframes flyK{to{opacity:0;transform:translate(-60px,-320px)  rotate(-8deg)  scale(.15);}}
+@keyframes flyM{to{opacity:0;transform:translate(80px,-300px)   rotate(10deg)  scale(.18);}}
+@keyframes flyR{to{opacity:0;transform:translate(220px,-260px)  rotate(24deg)  scale(.2);}}
+
+/* "Tap to Enter" button */
+#intro-cta{
+  font-family:'Ubuntu Mono',monospace;font-size:.72rem;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:#fff;background:transparent;
+  border:1px solid rgba(255,255,255,.25);
+  padding:.9rem 2.4rem;border-radius:2px;
+  cursor:none;
+  opacity:0;animation:ctaIn .5s ease 1s forwards;
+  transition:border-color .25s,box-shadow .25s;
+  position:relative;overflow:hidden;
+}
+#intro-cta::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(232,163,61,.1),transparent);
+  transform:translateX(-100%);transition:transform .5s;
+}
+#intro-cta:hover::after{transform:translateX(100%);}
+#intro-cta:hover{border-color:#e8a33d;box-shadow:0 0 24px rgba(232,163,61,.2);}
+#intro-cta.fade-out{animation:ctaOut .3s ease forwards!important;}
+@keyframes ctaIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+@keyframes ctaOut{to{opacity:0;transform:scale(.9);}}
+
+/* Full name reveal panel */
+#name-reveal{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:none;gap:.2rem;
+}
+.nr-line{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:800;font-style:italic;
+  font-size:clamp(2rem,9vw,8rem);
+  text-transform:uppercase;letter-spacing:-.02em;line-height:.9;
+  overflow:hidden;
+}
+.nr-inner{
+  display:block;
+  transform:translateY(110%);
+  transition:transform .75s cubic-bezier(.16,1,.3,1);
+}
+.nr-inner.up{transform:translateY(0);}
+.nr-line:last-child .nr-inner{color:#e8a33d;transition-delay:.1s;}
+.nr-tag{
+  margin-top:1.2rem;
+  font-family:'Ubuntu Mono',monospace;font-size:.65rem;
+  letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4);
+  opacity:0;transition:opacity .5s ease .55s;
+}
+.nr-tag.show{opacity:1;}
+#intro-particles{position:absolute;inset:0;z-index:0;pointer-events:none;}
+#intro .dkmr-row,#intro #name-reveal,#intro #intro-cta{position:relative;z-index:1;}
+
+/* ══════════════════════════════════════════════════════════════ */
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --bg:#0a0a0a;--bg2:#111;--bg3:#181818;
@@ -191,6 +284,22 @@ footer span{color:var(--accent);}
 </style>
 </head>
 <body>
+
+<!-- ══ INTRO SPLASH ══ -->
+<div id="intro">
+  <div id="intro-particles"></div>
+  <div id="name-reveal">
+    <div class="nr-line"><span class="nr-inner">DANUSHKUMAR</span></div>
+    <div class="nr-tag">Full-Stack Developer · AI Builder</div>
+  </div>
+  <div class="dkmr-row">
+    <span class="dl" id="dl-d">D</span>
+    <span class="dl" id="dl-k">K</span>
+    <span class="dl" id="dl-m">M</span>
+    <span class="dl" id="dl-r">R</span>
+  </div>
+  <button id="intro-cta">Tap to Enter</button>
+</div>
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
 <div id="progress-bar"></div>
@@ -215,7 +324,7 @@ footer span{color:var(--accent);}
 <section id="hero" aria-label="Hero introduction">
   <div class="hero-left">
     <span class="hero-tag reveal">Full-Stack Developer · AI Builder · Performer</span>
-    <h1 class="hero-name reveal delay-1">Danush<span>kumar</span> K</h1>
+    <h1 class="hero-name reveal delay-1">Danush<span>kumar</span></h1>
     <div class="hero-typed reveal delay-2" id="typed-text"><span id="typed-phrase"></span><span class="cursor-blink" aria-hidden="true"></span></div>
     <div class="hero-btns reveal delay-3">
       <a href="#projects" class="btn-primary">View My Work</a>
@@ -529,6 +638,40 @@ footer span{color:var(--accent);}
 </footer>
 
 <script>
+// ── INTRO SPLASH ─────────────────────────────────────────────────
+(function(){
+  const intro  = document.getElementById('intro');
+  const cta    = document.getElementById('intro-cta');
+  const letters = ['dl-d','dl-k','dl-m','dl-r'].map(id=>document.getElementById(id));
+  const nrInners = document.querySelectorAll('.nr-inner');
+  const nrTag    = document.querySelector('.nr-tag');
+
+  // prevent scroll while intro is up
+  document.body.style.overflow = 'hidden';
+
+  cta.addEventListener('click', function(){
+    // 1. fade out CTA immediately
+    cta.classList.add('fade-out');
+
+    // 2. letters fly off after 150ms
+    setTimeout(()=>{
+      letters.forEach(l => l.classList.add('fly'));
+    }, 150);
+
+    // 3. full name slides up at 500ms
+    setTimeout(()=>{
+      nrInners.forEach(n => n.classList.add('up'));
+      nrTag.classList.add('show');
+    }, 500);
+
+    // 4. whole overlay fades out at 1400ms, restore scroll
+    setTimeout(()=>{
+      intro.classList.add('hidden');
+      document.body.style.overflow = '';
+    }, 1600);
+  });
+})();
+
 // ── CURSOR ──────────────────────────────────────────────────────
 const dot = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
@@ -645,7 +788,7 @@ document.querySelectorAll('.flip-front').forEach((front, idx) => {
   });
 });
 
-// ── TSPARTICLES ──────────────────────────────────────────────────
+// ── TSPARTICLES (main) ───────────────────────────────────────────
 (async () => {
   try {
     await tsParticles.load("tsparticles", {
@@ -671,6 +814,28 @@ document.querySelectorAll('.flip-front').forEach((front, idx) => {
       detectRetina: true
     });
   } catch(e) { console.warn('tsParticles not loaded:', e); }
+})();
+
+// ── TSPARTICLES (intro) ──────────────────────────────────────────
+(async () => {
+  try {
+    await tsParticles.load("intro-particles", {
+      fpsLimit: 60,
+      particles: {
+        number: { value: 60, density: { enable: true, area: 900 } },
+        color: { value: ["#ffffff","#e8a33d","#4fd1c5"] },
+        opacity: { value: 0.35, random: { enable: true, minimumValue: 0.08 } },
+        size: { value: { min: 1, max: 2.5 } },
+        links: { enable: true, distance: 140, color: "#ffffff", opacity: 0.07, width: 1 },
+        move: { enable: true, speed: 0.55, random: true, outModes: { default: "bounce" } }
+      },
+      interactivity: {
+        events: { onHover: { enable: true, mode: "grab" }, onClick: { enable: true, mode: "push" } },
+        modes: { grab: { distance: 160, links: { opacity: 0.4, color: "#e8a33d" } }, push: { quantity: 3 } }
+      },
+      detectRetina: true
+    });
+  } catch(e) { console.warn('intro particles error:', e); }
 })();
 </script>
 </body>
