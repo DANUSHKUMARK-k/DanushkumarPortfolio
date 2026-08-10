@@ -14,7 +14,8 @@
   position:fixed;inset:0;z-index:9999;
   background:#050505;
   display:flex;align-items:center;justify-content:center;
-  flex-direction:column;gap:2.5rem;
+  flex-direction:column;gap:0;
+  cursor:none;
   transition:opacity .8s ease,visibility .8s ease;
 }
 #intro.hidden{opacity:0;visibility:hidden;pointer-events:none;}
@@ -47,28 +48,22 @@
 @keyframes flyM{to{opacity:0;transform:translate(80px,-300px)   rotate(10deg)  scale(.18);}}
 @keyframes flyR{to{opacity:0;transform:translate(220px,-260px)  rotate(24deg)  scale(.2);}}
 
-/* "Tap to Enter" button */
-#intro-cta{
-  font-family:'Ubuntu Mono',monospace;font-size:.72rem;
+/* hint text at bottom */
+.intro-hint{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  font-family:'Ubuntu Mono',monospace;font-size:.62rem;
   letter-spacing:.22em;text-transform:uppercase;
-  color:#fff;background:transparent;
-  border:1px solid rgba(255,255,255,.25);
-  padding:.9rem 2.4rem;border-radius:2px;
-  cursor:none;
-  opacity:0;animation:ctaIn .5s ease 1s forwards;
-  transition:border-color .25s,box-shadow .25s;
-  position:relative;overflow:hidden;
+  color:rgba(255,255,255,.3);
+  opacity:0;animation:ctaIn .5s ease 1.1s forwards;
+  white-space:nowrap;
+  animation-name:ctaIn;
 }
-#intro-cta::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(90deg,transparent,rgba(232,163,61,.1),transparent);
-  transform:translateX(-100%);transition:transform .5s;
+.intro-hint::before{
+  content:'';display:block;width:6px;height:6px;border-radius:50%;
+  background:var(--accent);margin:0 auto .6rem;
+  animation:pulseDot 1.5s ease-in-out infinite;
 }
-#intro-cta:hover::after{transform:translateX(100%);}
-#intro-cta:hover{border-color:#e8a33d;box-shadow:0 0 24px rgba(232,163,61,.2);}
-#intro-cta.fade-out{animation:ctaOut .3s ease forwards!important;}
-@keyframes ctaIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
-@keyframes ctaOut{to{opacity:0;transform:scale(.9);}}
+@keyframes pulseDot{0%,100%{opacity:.4;transform:scale(1);}50%{opacity:1;transform:scale(1.4);}}
 
 /* Full name reveal panel */
 #name-reveal{
@@ -298,7 +293,7 @@ footer span{color:var(--accent);}
     <span class="dl" id="dl-m">M</span>
     <span class="dl" id="dl-r">R</span>
   </div>
-  <button id="intro-cta">Tap to Enter</button>
+  <div class="intro-hint">Tap anywhere to enter</div>
 </div>
 <div id="cursor-dot"></div>
 <div id="cursor-ring"></div>
@@ -640,35 +635,36 @@ footer span{color:var(--accent);}
 <script>
 // ── INTRO SPLASH ─────────────────────────────────────────────────
 (function(){
-  const intro  = document.getElementById('intro');
-  const cta    = document.getElementById('intro-cta');
+  const intro   = document.getElementById('intro');
   const letters = ['dl-d','dl-k','dl-m','dl-r'].map(id=>document.getElementById(id));
-  const nrInners = document.querySelectorAll('.nr-inner');
-  const nrTag    = document.querySelector('.nr-tag');
+  const nrInner = document.querySelector('.nr-inner');
+  const nrTag   = document.querySelector('.nr-tag');
+  const hint    = document.querySelector('.intro-hint');
 
-  // prevent scroll while intro is up
   document.body.style.overflow = 'hidden';
 
-  cta.addEventListener('click', function(){
-    // 1. fade out CTA immediately
-    cta.classList.add('fade-out');
+  let triggered = false;
+  intro.addEventListener('click', function(){
+    if(triggered) return;
+    triggered = true;
 
-    // 2. letters fly off after 150ms
+    // 1. hide hint
+    if(hint) hint.style.opacity = '0';
+
+    // 2. letters fly off
+    setTimeout(()=>{ letters.forEach(l => l.classList.add('fly')); }, 80);
+
+    // 3. full name slides up
     setTimeout(()=>{
-      letters.forEach(l => l.classList.add('fly'));
-    }, 150);
+      if(nrInner) nrInner.classList.add('up');
+      if(nrTag)   nrTag.classList.add('show');
+    }, 450);
 
-    // 3. full name slides up at 500ms
-    setTimeout(()=>{
-      nrInners.forEach(n => n.classList.add('up'));
-      nrTag.classList.add('show');
-    }, 500);
-
-    // 4. whole overlay fades out at 1400ms, restore scroll
+    // 4. overlay fades out, restore scroll
     setTimeout(()=>{
       intro.classList.add('hidden');
       document.body.style.overflow = '';
-    }, 1600);
+    }, 1500);
   });
 })();
 
