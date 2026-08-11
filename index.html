@@ -31,6 +31,7 @@
 .dkmr-row{
   display:flex;gap:.06em;line-height:1;
   animation:dkmrFloat 4s ease-in-out infinite;
+  position:relative;z-index:2;
 }
 @keyframes dkmrFloat{
   0%,100%{transform:translateY(0px);}
@@ -47,8 +48,8 @@
   will-change:transform,opacity;
 }
 #dl-d{animation-delay:.1s;}
-#dl-k{animation-delay:.2s;}
-#dl-m{animation-delay:.3s;}
+#dl-k{animation-delay:.2s;color:#e8a33d;}
+#dl-m{animation-delay:.3s;color:#e8a33d;}
 #dl-r{animation-delay:.4s;color:#e8a33d;}
 @keyframes dlIn{from{opacity:0;transform:translateY(60px);}to{opacity:1;transform:none;}}
 
@@ -64,9 +65,10 @@
 .intro-hint{
   font-family:'Ubuntu Mono',monospace;font-size:.62rem;
   letter-spacing:.22em;text-transform:uppercase;
-  color:rgba(255,255,255,.3);white-space:nowrap;z-index:2;
+  color:rgba(255,255,255,.3);white-space:nowrap;
   opacity:0;animation:ctaIn .5s ease 1.1s forwards;
   margin-top:1.2rem;
+  position:relative;z-index:2;
 }
 .intro-hint::before{
   content:'';display:block;width:6px;height:6px;border-radius:50%;
@@ -84,7 +86,7 @@
 .nr-line{
   font-family:'Barlow Condensed',sans-serif;
   font-weight:800;font-style:italic;
-  font-size:clamp(2.5rem,10vw,9rem);
+  font-size:clamp(2rem,8.5vw,9rem);
   text-transform:uppercase;letter-spacing:-.02em;line-height:.9;
   overflow:hidden;
 }
@@ -97,7 +99,6 @@
 }
 .nr-tag.show{opacity:1;}
 #intro-particles{position:absolute;inset:0;z-index:0;pointer-events:none;}
-
 /* ══════════════════════════════════════════════════════════════ */
 
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -142,10 +143,20 @@ body:has(a:hover) #cursor-ring,body:has(button:hover) #cursor-ring{width:48px;he
 .nav-links a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--accent);transition:width .3s;}
 .nav-links a:hover,.nav-links a.active{color:var(--fg);}
 .nav-links a:hover::after,.nav-links a.active::after{width:100%;}
-@media(max-width:600px){
-  #nav{padding:1rem 1.2rem;}
-  .nav-links{gap:.9rem;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px;}
-  .nav-links a{font-size:.6rem;letter-spacing:.08em;white-space:nowrap;}
+@media(max-width:768px){
+  #nav{padding:.85rem 1.2rem;gap:1rem;}
+  .nav-links{
+    gap:.75rem;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:2px;
+    /* hide scrollbar */
+    scrollbar-width:none;
+  }
+  .nav-links::-webkit-scrollbar{display:none;}
+  .nav-links a{font-size:.58rem;letter-spacing:.07em;white-space:nowrap;}
+  /* active link gets accent dot indicator on mobile */
+  .nav-links a.active{color:var(--accent);}
 }
 
 /* SECTIONS SHARED */
@@ -161,6 +172,21 @@ section{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction
 .reveal-left.visible,.reveal-right.visible{opacity:1;transform:none;}
 .delay-1{transition-delay:.08s;}.delay-2{transition-delay:.16s;}.delay-3{transition-delay:.24s;}
 .delay-4{transition-delay:.32s;}.delay-5{transition-delay:.40s;}
+
+/* SECTION FADE — whole sections fade in as they enter viewport */
+section:not(#hero){
+  opacity:0;
+  transform:translateY(30px);
+  transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1);
+}
+section:not(#hero).sec-visible{
+  opacity:1;
+  transform:none;
+}
+
+@media(max-width:768px){
+  section{padding:5rem 1.4rem 4rem;}
+}
 
 /* HERO */
 #hero{min-height:100vh;padding:0 5vw;flex-direction:row;justify-content:space-between;align-items:center;gap:3rem;position:relative;}
@@ -190,7 +216,7 @@ section{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction
   mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
   filter:drop-shadow(0 0px 30px rgba(0,0,0,.5));
 }
-@media(max-width:860px){#hero{flex-direction:column-reverse;justify-content:center;padding-top:8rem;}.hero-right{flex:none;width:150px;}.hero-name{white-space:normal;}}
+@media(max-width:860px){#hero{flex-direction:column-reverse;justify-content:center;padding-top:8rem;}.hero-right{flex:none;width:150px;}.hero-name{white-space:normal;font-size:clamp(2.8rem,12vw,5rem);}}
 </style>
 <style>
 /* ABOUT */
@@ -720,19 +746,37 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 40);
 }, { passive: true });
 
-// ── ACTIVE NAV LINK ─────────────────────────────────────────────
+// ── ACTIVE NAV LINK — scroll-position based (works on mobile) ───
 const navLinks = document.querySelectorAll('.nav-links a');
 const sections = document.querySelectorAll('section[id]');
-const secObserver = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      navLinks.forEach(l => l.classList.remove('active'));
-      const link = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
-      if (link) link.classList.add('active');
+
+function updateActiveNav() {
+  const scrollY = window.scrollY + window.innerHeight * 0.35;
+  let current = '';
+  sections.forEach(sec => {
+    if (sec.offsetTop <= scrollY) current = sec.id;
+  });
+  navLinks.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + current) {
+      l.classList.add('active');
+      // scroll active link into view on mobile nav
+      if (window.innerWidth <= 768) {
+        l.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+      }
     }
   });
-}, { threshold: 0.2, rootMargin: '-10% 0px -40% 0px' });
-sections.forEach(s => secObserver.observe(s));
+}
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+updateActiveNav();
+
+// ── SECTION FADE IN ──────────────────────────────────────────────
+const secFadeObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('sec-visible');
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('section:not(#hero)').forEach(s => secFadeObserver.observe(s));
 
 // ── SMOOTH NAV SCROLL ───────────────────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(a => {
