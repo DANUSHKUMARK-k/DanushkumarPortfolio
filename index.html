@@ -262,9 +262,9 @@ section:not(#hero).sec-visible{
 /* PROJECTS */
 .projects-inner{max-width:1100px;width:100%;}
 .bento-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem;}
-.flip-card{perspective:1100px;height:280px;}
+.flip-card{perspective:1100px;height:280px;cursor:pointer;}
 .flip-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.16,1,.3,1);}
-.flip-card:hover .flip-inner{transform:rotateY(180deg);}
+.flip-card:hover .flip-inner, .flip-card.flipped .flip-inner{transform:rotateY(180deg)!important;}
 .flip-front,.flip-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:8px;padding:1.8rem;display:flex;flex-direction:column;justify-content:space-between;}
 .flip-front{background:var(--bg3);border:1px solid var(--line);}
 .flip-back{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid rgba(232,163,61,.3);transform:rotateY(180deg);}
@@ -831,32 +831,10 @@ tabs.forEach(tab => {
   });
 });
 
-// ── FLIP CARD 3D TILT & TOUCH SUPPORT ───────────────────────────
+// ── FLIP CARD HOVER & TAP SUPPORT ───────────────────────────────
 document.querySelectorAll('.flip-card').forEach((card) => {
-  const front = card.querySelector('.flip-front');
-  const inner = card.querySelector('.flip-inner');
-  if (front && inner) {
-    front.addEventListener('mousemove', e => {
-      if (window.matchMedia('(pointer: fine)').matches) {
-        const r = front.getBoundingClientRect();
-        const x = ((e.clientX - r.left) / r.width - 0.5) * 14;
-        const y = ((e.clientY - r.top)  / r.height - 0.5) * -14;
-        inner.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-      }
-    });
-    front.addEventListener('mouseleave', () => {
-      if (!card.classList.contains('flipped')) {
-        inner.style.transform = '';
-      }
-    });
-  }
   card.addEventListener('click', () => {
-    if (window.matchMedia('(pointer: coarse)').matches) {
-      card.classList.toggle('flipped');
-      if (inner) {
-        inner.style.transform = card.classList.contains('flipped') ? 'rotateY(180deg)' : '';
-      }
-    }
+    card.classList.toggle('flipped');
   });
 });
 
