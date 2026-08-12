@@ -216,7 +216,17 @@ section:not(#hero).sec-visible{
   mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
   filter:drop-shadow(0 0px 30px rgba(0,0,0,.5));
 }
-@media(max-width:860px){#hero{flex-direction:column-reverse;justify-content:center;padding-top:8rem;}.hero-right{flex:none;width:150px;}.hero-name{white-space:normal;font-size:clamp(2.8rem,12vw,5rem);}}
+@media(max-width:860px){
+  #hero{flex-direction:column;justify-content:center;padding-top:6rem;padding-bottom:5rem;text-align:center;gap:1.2rem;}
+  .hero-right{flex:none;width:220px;margin:0 auto;order:-1;}
+  .hero-left{width:100%;display:flex;flex-direction:column;align-items:center;margin-bottom:2rem;}
+  .hero-name{white-space:normal;font-size:clamp(2.8rem,12vw,5rem);text-align:center;}
+  .hero-tag{text-align:center;}
+  .hero-typed{text-align:center;}
+  .hero-btns{justify-content:center;}
+  .hero-photo{width:220px;}
+  .hero-scroll-cue{bottom:1.2rem;}
+}
 </style>
 <style>
 /* ABOUT */
